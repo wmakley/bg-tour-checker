@@ -7,7 +7,6 @@ test('Empty Stack', () => {
     // WHEN
     const stack = new BgTourChecker.BgTourCheckerStack(app, 'MyTestStack', {
       alertEmail: '***REMOVED***',
-      crawlUrl: 'https://aws.amazon.com/cdk'
     });
     // THEN
     expectCDK(stack).to(matchTemplate({

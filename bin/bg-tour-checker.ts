@@ -8,6 +8,5 @@ const env: cdk.Environment = { account: '***REMOVED***', region: '***REMOVED***'
 const app = new cdk.App();
 new BgTourCheckerStack(app, 'BgTourCheckerStack', {
   alertEmail: '***REMOVED***',
-  crawlUrl: "https://www.blind-guardian.com/tour/",
   env: env
 });

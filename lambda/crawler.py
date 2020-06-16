@@ -14,9 +14,10 @@ PAGE_ENCODING = 'utf-8'
 # Assumes UTF-8
 def main(event, context):
     url = event['url']
+    title = event['title']
     bucket = os.environ['BUCKET']
     topic = os.environ['TOPIC']
-    LOG.info("Url: {}, Bucket: {} Topic: {}".format(url, bucket, topic))
+    LOG.info("Title: {}, Url: {}, Bucket: {} Topic: {}".format(title, url, bucket, topic))
 
     resp = urllib.request.urlopen(url, timeout=5)
 
@@ -48,19 +49,19 @@ def main(event, context):
         sns_client = boto3.client('sns')
         sns_client.publish(
             TopicArn=topic,
-            Subject="Blind Guardian Tour Page Changed!",
+            Subject="{} Changed!".format(title),
             Message="Check it out at {}\r\nDelta: \r\n{}".format(url, delta_str)
         )
         s3_client.put_object(Body=current_page_body, Bucket=bucket, Key=object_key)
 
         return {
-            "message": "Page changed! Notified subscribers and saved new version.",
+            "message": "{} changed! Notified subscribers and saved new version.".format(title),
             "url": url,
             "delta": delta,
             "s3_object": "{}/{}".format(bucket, object_key)
         }
     else:
-        LOG.info("No change to page content.")
+        LOG.info("No change to {} content.".format(title))
         return {
             "message": "No change.",
             "url": url,
