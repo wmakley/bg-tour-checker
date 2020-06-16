@@ -10,7 +10,7 @@ export interface BgTourCheckerStackProps extends cdk.StackProps {
 
 export class BgTourCheckerStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props: BgTourCheckerStackProps) {
-    super(scope, id, props);
+    super(scope, id, { description: "Check blind guardian tours page for changes every Saturday", ...props });
 
     const bucket = new s3.Bucket(this, 'CrawlerStash', {
       blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
