@@ -5,7 +5,10 @@ import * as BgTourChecker from '../lib/bg-tour-checker-stack';
 test('Empty Stack', () => {
     const app = new cdk.App();
     // WHEN
-    const stack = new BgTourChecker.BgTourCheckerStack(app, 'MyTestStack');
+    const stack = new BgTourChecker.BgTourCheckerStack(app, 'MyTestStack', {
+      alertEmail: '***REMOVED***',
+      crawlUrl: 'https://aws.amazon.com/cdk'
+    });
     // THEN
     expectCDK(stack).to(matchTemplate({
       "Resources": {}
