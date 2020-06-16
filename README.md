@@ -1,10 +1,10 @@
-# Welcome to your CDK TypeScript project!
+# CDK Page Monitor Project
 
-This is a blank project for TypeScript development with CDK.
+This is a simple test of using CDK to build a "site pinger" that examines a web page once a week to see if it has changed. My personal use case for this is to check if my favorite band is touring (not that that seems likely for a very long time now).
 
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
+What's interesting is that this example would be trivial to implement using cron and a single python script on an instance or a laptop, but it requires a lot more wiring using AWS serverless technology. The advantage of this approach is easy deployments and scalability, as well as being a trivial example to learn how to build something more complex.
 
-## Useful commands
+## Commands
 
  * `npm run build`   compile typescript to js
  * `npm run watch`   watch for changes and compile

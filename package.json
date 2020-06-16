@@ -4,6 +4,7 @@
   "bin": {
     "bg-tour-checker": "bin/bg-tour-checker.js"
   },
+  "license": "MIT",
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
