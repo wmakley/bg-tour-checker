@@ -4,6 +4,10 @@ This is a simple test of using CDK to build a "site pinger" that examines a web 
 
 What's interesting is that this example would be trivial to implement using cron and a single python script on an instance or a laptop, but it requires a lot more wiring using AWS serverless technology. The advantage of this approach is easy deployments and scalability, as well as being a trivial example to learn how to build something more complex.
 
+## Unit Tests
+
+The example unit test seems silly - why would I write out all the CloudFormation template code that I expect the CDK to generate? That's just a unit test of the CDK, not my stack. Maybe I am missing something.
+
 ## Commands
 
  * `npm run build`   compile typescript to js
