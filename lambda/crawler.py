@@ -7,7 +7,7 @@ import urllib.request
 import boto3
 
 LOG = logging.getLogger()
-LOG.setLevel(logging.DEBUG)
+LOG.setLevel(logging.INFO)
 
 PAGE_ENCODING = 'utf-8'
 
@@ -41,21 +41,22 @@ def main(event, context):
     if current_page_body != previous_page_body:
         LOG.info("Page content changed! Sending alert and storing new version.")
         differ = difflib.Differ()
-        delta = differ.compare(previous_page_body.splitlines(keepends=True), current_page_body.splitlines(keepends=True))
-        LOG.debug(delta)
+        delta = list(differ.compare(previous_page_body.splitlines(keepends=True), current_page_body.splitlines(keepends=True)))
+        delta_str = "\r\n".join([str(l) for l in delta])
+        LOG.debug("Delta: %s", delta_str)
 
         sns_client = boto3.client('sns')
         sns_client.publish(
             TopicArn=topic,
             Subject="Blind Guardian Tour Page Changed!",
-            Message="Check it out at {}".format(url)
+            Message="Check it out at {}\r\nDelta: \r\n{}".format(url, delta_str)
         )
         s3_client.put_object(Body=current_page_body, Bucket=bucket, Key=object_key)
 
         return {
             "message": "Page changed! Notified subscribers and saved new version.",
-            "delta": delta,
             "url": url,
+            "delta": delta,
             "s3_object": "{}/{}".format(bucket, object_key)
         }
     else:
@@ -63,6 +64,7 @@ def main(event, context):
         return {
             "message": "No change.",
             "url": url,
+            "delta": None,
             "s3_object": "{}/{}".format(bucket, object_key)
         }
 
