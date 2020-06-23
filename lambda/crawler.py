@@ -39,12 +39,21 @@ def main(event, context):
         LOG.info("No previous page content found in bucket.")
         previous_page_body = ""
 
-    if current_page_body != previous_page_body:
+    differ = difflib.Differ()
+    compare_result = list(differ.compare(previous_page_body.splitlines(keepends=True), current_page_body.splitlines(keepends=True)))
+    delta = []
+
+    line_number = 1
+    for line in compare_result:
+        if line.startswith('-') or line.startswith('+'):
+            delta.append("{:03} {}".format(line_number, line))
+        line_number = line_number + 1
+
+    delta_str = "".join(delta)
+    LOG.debug("Delta: %s", delta)
+
+    if len(delta) > 0:
         LOG.info("Page content changed! Sending alert and storing new version.")
-        differ = difflib.Differ()
-        delta = list(differ.compare(previous_page_body.splitlines(keepends=True), current_page_body.splitlines(keepends=True)))
-        delta_str = "\r\n".join([str(l) for l in delta])
-        LOG.debug("Delta: %s", delta_str)
 
         sns_client = boto3.client('sns')
         sns_client.publish(
@@ -65,7 +74,7 @@ def main(event, context):
         return {
             "message": "No change.",
             "url": url,
-            "delta": None,
+            "delta": [],
             "s3_object": "{}/{}".format(bucket, object_key)
         }
 
