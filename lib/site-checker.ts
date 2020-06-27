@@ -35,7 +35,6 @@ export class SiteChecker extends cdk.Construct {
         "TOPIC": this._topic.topicArn,
       },
       timeout: cdk.Duration.seconds(10),
-      onSuccess: new SnsDestination(this._topic), // temporary until I know it works
       onFailure: new SnsDestination(this._topic)
     });
 
