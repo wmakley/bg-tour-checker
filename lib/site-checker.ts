@@ -16,30 +16,30 @@ export interface SiteCheckerProps {
 }
 
 export class SiteChecker extends cdk.Construct {
-  private readonly _lambda: lambda.IFunction;
-  private readonly _bucket: s3.IBucket;
-  private readonly _topic: sns.ITopic;
+  public readonly lambda: lambda.IFunction;
+  public readonly bucket: s3.IBucket;
+  public readonly topic: sns.ITopic;
 
   constructor(scope: cdk.Construct, id: string, props: SiteCheckerProps) {
     super(scope, id);
 
-    this._topic = props.topic;
-    this._bucket = props.bucket;
+    this.topic = props.topic;
+    this.bucket = props.bucket;
 
-    this._lambda = new lambda.Function(this, 'SiteCrawler', {
+    this.lambda = new lambda.Function(this, 'SiteCrawler', {
       runtime: lambda.Runtime.PYTHON_3_7,
       code: lambda.Code.fromAsset(path.join(__dirname, '..', 'lambda')),
       handler: 'crawler.main',
       environment: {
-        "BUCKET": this._bucket.bucketName,
-        "TOPIC": this._topic.topicArn,
+        "BUCKET": this.bucket.bucketName,
+        "TOPIC": this.topic.topicArn,
       },
       timeout: cdk.Duration.seconds(10),
-      onFailure: new SnsDestination(this._topic)
+      onFailure: new SnsDestination(this.topic)
     });
 
-    this._bucket.grantReadWrite(this._lambda);
-    this._topic.grantPublish(this._lambda);
+    this.bucket.grantReadWrite(this.lambda);
+    this.topic.grantPublish(this.lambda);
 
     const scheduledEvent = events.RuleTargetInput.fromObject({
       "url": props.url,
@@ -55,22 +55,10 @@ export class SiteChecker extends cdk.Construct {
         weekDay: (props.weekDay || 'SAT')
       }),
       targets: [
-        new targets.LambdaFunction(this._lambda, {
+        new targets.LambdaFunction(this.lambda, {
           event: scheduledEvent
         })
       ]
     });
-  }
-
-  public get lambda() {
-    return this._lambda;
-  }
-
-  public get bucket() {
-    return this._bucket;
-  }
-
-  public get topic() {
-    return this._topic;
   }
 }
